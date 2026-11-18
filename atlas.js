@@ -1,5 +1,5 @@
 const eras = ["Early councils", "Imperial church", "East and West", "Reformation", "Modern era"];
-const types = {e:"Ecumenical Council",p:"Great Orthodox Council",c:"Council",s:"Schism or separation",r:"Reconciliation or dialogue",m:"Movement or milestone"};
+const types = {b:"Scripture and canon milestone",e:"Ecumenical Council",p:"Great Orthodox Council",c:"Council",s:"Schism or separation",r:"Reconciliation or dialogue",m:"Movement or milestone"};
 const tracks = {
   orthodox: {lane:110, label:"Eastern Orthodox", start:"great-schism", color:"#e6bf75"},
   east: {lane:141, label:"Church of the East", start:"ephesus", parent:"orthodox", color:"#ed9c85"},
@@ -15,6 +15,7 @@ const tracks = {
   pentecostal: {lane:451, label:"Pentecostal", start:"pentecostal", dotted:true, color:"#c6afe8"}
 };
 const eventTracks = {
+  "luther-bible-1534":"lutheran", "westminster-1646":"reformed",
   luther:"lutheran", anabaptist:"anabaptist", anglican:"anglican", reformed:"reformed",
   trent:"roman", baptist:"baptist", methodist:"methodist", pentecostal:"pentecostal",
   vatican:"roman", havana:"roman", "old-believers":"old", ephesus:"east", chalcedon:"oriental"

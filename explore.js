@@ -1,9 +1,10 @@
 const topics = {
-  trinity:'Trinity and the Creed', christology:'Christology', icons:'Icons and worship',
+  scripture:'Scripture and biblical canon', trinity:'Trinity and the Creed', christology:'Christology', icons:'Icons and worship',
   authority:'Papal authority', governance:'Church governance', sacraments:'Sacraments and salvation',
   prayer:'Prayer and deification', reunion:'Communion and reconciliation', reformation:'Reformation and revival'
 };
 const topicEvents = {
+  scripture:canonEventIds,
   trinity:['nicaea','constantinople-i','constantinople-ii','photios-council','great-schism','florence'],
   christology:['ephesus','chalcedon','constantinople-ii','constantinople-iii','dialogue'],
   icons:['nicaea-ii','quinisext','old-believers'],
@@ -12,13 +13,13 @@ const topicEvents = {
   sacraments:['constantinople-1484','anabaptist','trent','brest','baptist','constantinople-1638','iasi-1642','jerusalem-1672','constantinople-1691','luther'],
   prayer:['palamas-1341','palamas-1347','palamas-1351','palamas-1368','methodist','pentecostal'],
   reunion:['photios-council','florence','brest','censures','dialogue','sofia-1998','rocor','havana','ohrid','vatican','crete-2016'],
-  reformation:['luther','anabaptist','anglican','reformed','trent','baptist','constantinople-1638','iasi-1642','jerusalem-1672','constantinople-1691','methodist','pentecostal']
+  reformation:['luther-bible-1534','westminster-1646','luther','anabaptist','anglican','reformed','trent','baptist','constantinople-1638','iasi-1642','jerusalem-1672','constantinople-1691','methodist','pentecostal']
 };
 const traditionEvents = {
-  orthodox:['great-schism','crusade','florence','brest','old-believers','censures','dialogue','rocor','havana','ukraine','ohrid'],
-  east:['ephesus'], oriental:['chalcedon','dialogue'], old:['old-believers'],
-  roman:['great-schism','crusade','florence','luther','anabaptist','anglican','reformed','trent','brest','vatican','censures','havana'],
-  lutheran:['luther'], anabaptist:['anabaptist'], reformed:['reformed'],
+  orthodox:['eusebius-canon','athanasius-367','carthage-canon','great-schism','crusade','florence','brest','old-believers','censures','dialogue','rocor','havana','ukraine','ohrid'],
+  east:['eusebius-canon','athanasius-367','ephesus'], oriental:['eusebius-canon','athanasius-367','carthage-canon','chalcedon','dialogue'], old:['old-believers'],
+  roman:['eusebius-canon','athanasius-367','carthage-canon','great-schism','crusade','florence','luther','anabaptist','anglican','reformed','trent','brest','vatican','censures','havana'],
+  lutheran:['luther','luther-bible-1534'], anabaptist:['anabaptist'], reformed:['reformed','westminster-1646'],
   anglican:['anglican','baptist','methodist'], baptist:['baptist'], methodist:['methodist','pentecostal'],pentecostal:['pentecostal']
 };
 const profiles = {
@@ -36,6 +37,8 @@ const profiles = {
   pentecostal:{origin:'Multiple revival movements around the beginning of the twentieth century',belief:'Pentecostal traditions emphasise the work and gifts of the Holy Spirit, often including tongues, healing and experiential worship. Their organisations and teachings vary.',relationship:'Outside Orthodox communion. The open, dotted origin reflects several revival roots, with Azusa Street a major catalyst.',refs:['pentecostal']}
 };
 const glossary = {
+  'biblical canon':['The collection of books received by the Church as Holy Scripture. Different lists and classifications appear in the historical sources.','canonStudy'],
+  Apocrypha:['A term whose meaning varies by writer and period. In many Protestant contexts it refers to Old Testament books included in Greek and Latin Christian traditions but excluded from the Protestant canon.','lutherBible'],
   Theotokos:['God-bearer. The title identifies Mary’s Son as the eternal Word who became human. It safeguards the identity of Christ.','councils'],
   homoousios:['Of one essence. At Nicaea the term affirms that the Son shares the Father’s divine being.','councils'],
   Filioque:['Latin for “and the Son”. Its addition to the Creed’s statement about the Spirit’s procession is rejected by Eastern Orthodoxy.','eastwest'],
@@ -58,6 +61,11 @@ const councilPeople = {
   'constantinople-iii':[['Constantine IV','Emperor who convened the council'],['St Maximus the Confessor','Earlier defender of Christ’s two wills'],['Pope St Martin I','Earlier opponent of Monothelitism'],['Pope Honorius I','An earlier pope condemned by the council']],
   'nicaea-ii':[['St Irene','Empress who supported the council'],['St Tarasius','Patriarch who helped convene it'],['St John of Damascus','Earlier theological defender of holy icons']],
   'old-believers':[['Patriarch Nikon','Introduced the ritual reforms, then was deposed by the council'],['Archpriest Avvakum','A leading opponent of the reforms']],
+  'eusebius-canon':[['Eusebius of Caesarea','Bishop and historian describing scriptural reception']],
+  'athanasius-367':[['St Athanasius of Alexandria','Bishop who issued the Festal Letter']],
+  'carthage-canon':[['Aurelius of Carthage','Bishop who presided over African councils']],
+  'luther-bible-1534':[['Martin Luther','Reformer and translator'],['Hans Lufft','Printer of the Wittenberg Bible']],
+  'westminster-1646':[['The Westminster Assembly','Theologians who prepared the confession']],
   quinisext:[['Justinian II','Emperor who convened the council']],
   'photios-council':[['St Photios','Patriarch whose standing was recognised'],['Pope John VIII','Sent representatives to the council']],
   'palamas-1341':[['St Gregory Palamas','Defended hesychast prayer'],['Barlaam of Calabria','Opponent whose charges were rejected']],
@@ -88,6 +96,7 @@ const councilReception = {
   'constantinople-iii':['Imperial and episcopal representatives, including papal legates.','Received as the Sixth Ecumenical Council by Eastern Orthodoxy and Roman Catholicism.','It condemned Monothelitism, including several former patriarchs and Pope Honorius.'],
   'nicaea-ii':['Mainly Eastern bishops, papal legates and representatives connected with the Eastern patriarchates.','Received as the Seventh Ecumenical Council by Eastern Orthodoxy and Roman Catholicism.','Byzantine iconoclasm resumed in 815. The restoration of icons in 843 secured its Byzantine reception.'],
   'old-believers':['The Great Moscow Council of 1666–1667 included Russian bishops and Eastern patriarchs.','The council upheld the revised rites while deposing Nikon.','Old Believer communities rejected the reforms and developed separate hierarchies or priestless traditions.'],
+  'carthage-canon':['Regional assemblies of North African bishops.','The scriptural list was transmitted in the African canonical collection and later received through Trullo’s recognition of those canons.','The collection preserves decisions from several councils, and the numbering of this canon varies.'],
   quinisext:['An Eastern assembly under Justinian II.','Orthodoxy receives its canons in association with the Fifth and Sixth Councils.','Rome’s reception of particular canons differed.'],
   'photios-council':['An Eastern assembly with papal legates.','Cited in the Crete encyclical as a council of wider authority. Some Orthodox writers call it the Eighth Ecumenical Council.','Its relation to the council of 869–870 and later Roman reception has been contested.'],
   'palamas-1341':['Byzantine bishops and theological disputants.','Received in Orthodoxy as a foundational judgment defending hesychasm.','Further controversy led to the synods of 1347 and 1351.'],
@@ -109,6 +118,7 @@ const councilReception = {
   'crete-2016':['Ten autocephalous churches. Antioch, Russia, Bulgaria and Georgia were absent.','The participating churches adopted six documents and an encyclical.','Its pan-Orthodox standing and reception remain contested across the churches.']
 };
 const relatedSequences = [
+  canonEventIds,
   ['nicaea','constantinople-i','photios-council','great-schism'],
   ['ephesus','chalcedon','constantinople-ii','constantinople-iii','dialogue'],
   ['nicaea-ii','quinisext','old-believers'],

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="style.css">
 <script src="history.js" defer></script>
 <script src="councils.js" defer></script>
+<script src="scripture.js" defer></script>
 <script src="explore.js" defer></script>
 <script src="atlas.js" defer></script>
 </head>
@@ -24,7 +25,7 @@
 </div>
 <div class="explore-filters" aria-label="Explore filters">
 <label>Church tradition<select id="tradition"><option value="all">All traditions</option></select></label>
-<label>Event type<select id="event-type"><option value="all">All events</option><option value="council">Councils</option><option value="s">Schisms and separations</option><option value="r">Reconciliation and dialogue</option><option value="m">Origins and movements</option></select></label>
+<label>Event type<select id="event-type"><option value="all">All events</option><option value="council">Councils</option><option value="s">Schisms and separations</option><option value="r">Reconciliation and dialogue</option><option value="m">Origins and movements</option><option value="b">Scripture and canon milestones</option></select></label>
 <label>Council category<select id="council-category"><option value="all">All categories</option><option value="e">Seven ecumenical councils</option><option value="p">Great Orthodox councils</option><option value="c">Other councils and synods</option></select></label>
 <label>Topic<select id="topic"><option value="all">All topics</option></select></label>
 <label>From year<input id="from-year" type="number" min="325" max="2022" value="325" aria-label="From year"></label>
@@ -38,7 +39,7 @@
 <div id="chart" class="chart"></div>
 </div>
 <div class="scrubber"><span>325</span><input id="scrub" type="range" min="0" step="1" aria-label="Scrub through events"><span>2022</span></div>
-<div class="legend"><span><i class="e"></i>Ecumenical Council</span><span><i class="p"></i>Great Orthodox Council</span><span><i class="c"></i>Other council</span><span><i class="s"></i>Schism or separation</span><span><i class="r"></i>Reconciliation or dialogue</span><span><i class="m"></i>Movement or milestone</span><span class="scale">Equal spacing between events · relationships are schematic</span></div>
+<div class="legend"><span><i class="e"></i>Ecumenical Council</span><span><i class="p"></i>Great Orthodox Council</span><span><i class="c"></i>Other council</span><span><i class="s"></i>Schism or separation</span><span><i class="r"></i>Reconciliation or dialogue</span><span><i class="m"></i>Movement or milestone</span><span><i class="b"></i>Scripture and canon</span><span class="scale">Equal spacing between events · relationships are schematic</span></div>
 </section>
 <article id="detail" class="detail" aria-label="Selected event"></article>
 <dialog id="glossary-dialog" aria-labelledby="glossary-title"><div class="dialog-top"><h2 id="glossary-title">Theological glossary</h2><button id="glossary-close" aria-label="Close glossary">Close ×</button></div><div id="glossary-content"></div></dialog>
