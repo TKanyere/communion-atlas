@@ -4,11 +4,10 @@ class FilterPicker {
     this.label = select.closest('label').firstChild.textContent.trim();
     this.options = [...select.options].map(option=>({value:option.value,label:option.textContent}));
     this.values = [];
-    this.mode = 'single';
     this.onChange = onChange;
     this.element = document.createElement('fieldset');
     this.element.className = 'filter-picker';
-    this.element.innerHTML = `<legend>${this.label}</legend><details><summary aria-label="${this.label} selections"><span class="filter-summary"></span><span aria-hidden="true">⌄</span></summary><div class="filter-panel" role="group" aria-label="${this.label} options"><div class="filter-modes" aria-label="Selection mode"><button type="button" data-mode="single">Single</button><button type="button" data-mode="multiple">Multiple</button></div><div class="filter-options"></div><button type="button" data-clear>Clear selection</button></div></details>`;
+    this.element.innerHTML = `<legend>${this.label}</legend><details><summary aria-label="${this.label} selections"><span class="filter-summary"></span><span aria-hidden="true">⌄</span></summary><div class="filter-panel" role="group" aria-label="${this.label} options"><div class="filter-options"></div><button type="button" data-clear>Clear selection</button></div></details>`;
     select.closest('label').replaceWith(this.element);
     this.details = this.element.querySelector('details');
     this.panel = this.element.querySelector('.filter-panel');
@@ -18,20 +17,13 @@ class FilterPicker {
       if (!event.target.matches('input')) return;
       const value = event.target.value;
       if (value === 'all') this.values = [];
-      else if (this.mode === 'single') this.values = [value];
       else this.values = event.target.checked ? [...this.values,value] : this.values.filter(item=>item!==value);
       this.onChange();
-      if (this.mode === 'single') this.close(true);
     });
     this.element.addEventListener('click',event=>{
       const button = event.target.closest('button');
       if (!button) return;
-      if (button.dataset.mode) {
-        this.mode = button.dataset.mode;
-        if (this.mode === 'single') this.values = this.values.slice(0,1);
-        this.renderOptions();
-        this.onChange();
-      } else if (button.hasAttribute('data-clear')) {
+      if (button.hasAttribute('data-clear')) {
         this.values = [];
         this.onChange();
       }
@@ -50,7 +42,7 @@ class FilterPicker {
   }
   renderOptions() {
     this.element.querySelector('.filter-options').innerHTML = this.options.map(option=>
-      `<label class="filter-option"><input type="${this.mode==='single'?'radio':'checkbox'}" name="${this.id}-choice" value="${option.value}"><span>${option.label}</span></label>`).join('');
+      `<label class="filter-option"><input type="checkbox" name="${this.id}-choice" value="${option.value}"><span>${option.label}</span></label>`).join('');
     this.sync();
   }
   sync() {
@@ -60,14 +52,13 @@ class FilterPicker {
     for (const input of this.element.querySelectorAll('input')) {
       input.checked = input.value==='all' ? this.values.length===0 : this.values.includes(input.value);
     }
-    for (const button of this.element.querySelectorAll('[data-mode]')) button.setAttribute('aria-pressed',button.dataset.mode===this.mode);
   }
   toggle(value) {
-    if (this.mode==='single') this.values = this.values.includes(value) ? [] : [value];
-    else this.values = this.values.includes(value) ? this.values.filter(item=>item!==value) : [...this.values,value];
+    this.values = this.values.includes(value) ? this.values.filter(item=>item!==value) : [...this.values,value];
   }
   close(focus=false) {
     this.details.open = false;
     if (focus) this.summary.focus();
   }
 }
+
