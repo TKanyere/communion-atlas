@@ -32,6 +32,8 @@ const zoom = document.querySelector('#zoom');
 const fit = document.querySelector('#fit');
 const dialog = document.querySelector('#glossary-dialog');
 const filterControls = Object.fromEntries(['tradition','event-type','council-category','topic','from-year','to-year'].map(id=>[id,document.getElementById(id)]));
+const categoricalIds = ['tradition','event-type','council-category','topic'];
+const filterPickers = {};
 const eventIndex = id => chronology.findIndex(event=>event.id===id);
 let selected = Math.max(0,eventIndex(location.hash.slice(1)));
 let spacing = 184;
@@ -54,35 +56,38 @@ function explain(text) {
   });
 }
 function activeTracks() {
-  const tradition = filterControls.tradition.value;
-  if (tradition==='all') return Object.keys(tracks);
-  const ancestry = [tradition];
-  let parent = tracks[tradition].parent;
-  while (parent) {
-    ancestry.push(parent);
-    parent = tracks[parent].parent;
+  const traditions = filterPickers.tradition.values;
+  if (!traditions.length) return Object.keys(tracks);
+  const ancestry = new Set(traditions);
+  for (const tradition of traditions) {
+    let parent = tracks[tradition].parent;
+    while (parent) {
+      ancestry.add(parent);
+      parent = tracks[parent].parent;
+    }
+    if (tradition==='pentecostal') ['methodist','anglican','roman','orthodox'].forEach(key=>ancestry.add(key));
   }
-  if (tradition==='pentecostal') ancestry.push('methodist','anglican','roman','orthodox');
-  return ancestry;
+  return [...ancestry];
 }
 function matches(event) {
-  const values = Object.fromEntries(Object.entries(filterControls).map(([key,control])=>[key,control.value]));
-  const kind = values['event-type'];
+  const values = Object.fromEntries(categoricalIds.map(id=>[id,filterPickers[id].values]));
+  const kinds = values['event-type'];
   const council = ['e','p','c'].some(type=>event.type.includes(type));
-  return (values.tradition==='all' || event.traditions.includes(values.tradition)) &&
-    (kind==='all' || (kind==='council' ? council : kind==='m' ? ['luther','anabaptist','anglican','reformed','baptist','methodist','pentecostal'].includes(event.id) : event.type.includes(kind))) &&
-    (values['council-category']==='all' || event.type.includes(values['council-category'])) &&
-    (values.topic==='all' || event.topics.includes(values.topic)) &&
-    event.endYear>=Number(values['from-year'] || 325) && event.year<=Number(values['to-year'] || 2022);
+  return (!values.tradition.length || values.tradition.some(value=>event.traditions.includes(value))) &&
+    (!kinds.length || kinds.some(kind=>kind==='council' ? council : kind==='m' ? ['luther','anabaptist','anglican','reformed','baptist','methodist','pentecostal'].includes(event.id) : event.type.includes(kind))) &&
+    (!values['council-category'].length || values['council-category'].some(value=>event.type.includes(value))) &&
+    (!values.topic.length || values.topic.some(value=>event.topics.includes(value))) &&
+    event.endYear>=Number(filterControls['from-year'].value || 325) && event.year<=Number(filterControls['to-year'].value || 2022);
 }
 function renderProfile() {
-  const key = filterControls.tradition.value;
+  const keys = filterPickers.tradition.values;
   const panel = document.querySelector('#profile');
-  panel.hidden = key==='all';
-  document.querySelectorAll('[data-tradition]').forEach(button=>button.setAttribute('aria-pressed',button.dataset.tradition===key));
-  if (key==='all') return;
-  const profile = profiles[key];
-  panel.innerHTML = `<div><div class="eyebrow">TRADITION PROFILE</div><h2>${tracks[key].label}</h2><p>${profile.origin}</p></div><div><p>${profile.belief}</p><p>${profile.relationship}</p><div class="refs">${refs(profile.refs)}</div><button data-go="${tracks[key].start}">Open the origin event →</button></div>`;
+  panel.hidden = !keys.length;
+  document.querySelectorAll('[data-tradition]').forEach(button=>button.setAttribute('aria-pressed',keys.includes(button.dataset.tradition)));
+  panel.innerHTML = keys.map(key=>{
+    const profile = profiles[key];
+    return `<section class="profile-card"><div><div class="eyebrow">TRADITION PROFILE</div><h2>${tracks[key].label}</h2><p>${profile.origin}</p></div><div><p>${profile.belief}</p><p>${profile.relationship}</p><div class="refs">${refs(profile.refs)}</div><button data-go="${tracks[key].start}">Open the origin event →</button></div></section>`;
+  }).join('');
 }
 function renderChart() {
   const labelWidth = viewport.clientWidth<600 ? 124 : 180;
@@ -150,6 +155,7 @@ function select(index,scroll=true) {
   if(scroll&&!wholeHistory) viewport.scrollTo({left:spacing*(index+.5)-viewport.clientWidth/2,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
 }
 function applyFilters(scroll=true) {
+  for (const picker of Object.values(filterPickers)) picker.sync();
   visibleIndices=chronology.map((event,index)=>matches(event)?index:-1).filter(index=>index>=0);
   jump.innerHTML=eras.map((era,index)=>{
     const events=visibleIndices.filter(i=>chronology[i].era===index);
@@ -166,7 +172,9 @@ function applyFilters(scroll=true) {
   else select(visibleIndices.includes(selected)?selected:visibleIndices[0],scroll);
 }
 function resetFilters() {
-  for(const [id,control] of Object.entries(filterControls)) control.value=id==='from-year'?'325':id==='to-year'?'2022':'all';
+  for (const picker of Object.values(filterPickers)) picker.values = [];
+  filterControls['from-year'].value = '325';
+  filterControls['to-year'].value = '2022';
 }
 function openEvent(id) {
   const index=eventIndex(id);
@@ -187,7 +195,19 @@ function openGlossary(term) {
 for(const [key,track] of Object.entries(tracks)) filterControls.tradition.add(new Option(track.label,key));
 for(const [key,label] of Object.entries(topics)) filterControls.topic.add(new Option(label,key));
 document.querySelector('#track-picker').innerHTML=Object.entries(tracks).map(([key,track])=>`<button data-tradition="${key}" style="--track-color:${track.color}" aria-pressed="false">${track.label}</button>`).join('');
-for(const [id,control] of Object.entries(filterControls)) control.addEventListener(id.endsWith('year')?'input':'change',()=>applyFilters());
+for (const id of categoricalIds) filterPickers[id] = new FilterPicker(filterControls[id],()=>applyFilters());
+for (const id of ['from-year','to-year']) filterControls[id].addEventListener('input',()=>applyFilters());
+document.addEventListener('click',event=>{
+  for (const picker of Object.values(filterPickers)) {
+    if (!picker.element.contains(event.target)) picker.close();
+  }
+});
+document.addEventListener('keydown',event=>{
+  if (event.key!=='Escape') return;
+  for (const picker of Object.values(filterPickers)) {
+    if (picker.details.open) {picker.close(true);event.preventDefault();}
+  }
+});
 document.querySelector('#reset').addEventListener('click',()=>{resetFilters();applyFilters();});
 document.addEventListener('click',event=>{
   const button=event.target.closest('button');
@@ -195,10 +215,10 @@ document.addEventListener('click',event=>{
   const action=button.dataset;
   if(action.go) openEvent(action.go);
   else if(action.term)openGlossary(action.term);
-  else if(action.topic){filterControls.topic.value=action.topic;applyFilters();}
+  else if(action.topic){filterPickers.topic.toggle(action.topic);applyFilters();}
   else if(action.profile||action.tradition){
     const key=action.profile||action.tradition;
-    filterControls.tradition.value=filterControls.tradition.value===key?'all':key;
+    filterPickers.tradition.toggle(key);
     applyFilters(false);
   }else if(action.index!==undefined&&!dragged)select(Number(action.index));
 });
