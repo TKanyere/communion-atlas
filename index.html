@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Follow the councils, schisms and reconciliations that shaped Orthodox Christianity.">
+<title>The Communion Atlas</title>
+<link rel="stylesheet" href="style.css">
+<script src="history.js" defer></script>
+<script src="councils.js" defer></script>
+<script src="atlas.js" defer></script>
+</head>
+<body>
+<header class="mast"><a href="./" class="brand"><span aria-hidden="true">✠</span> THE COMMUNION ATLAS</a><a href="#method">About the atlas ↗</a></header>
+<main>
+<section class="intro"><div><div class="eyebrow">CHURCH HISTORY · 325–2022</div><h1>Follow the <em>timeline.</em></h1></div><p>Drag the timeline or select an event. Trace the Orthodox and Roman Catholic lines through the centuries, and follow the Protestant branches from the Reformation.</p></section>
+<section class="atlas" aria-label="Interactive church history timeline">
+<div class="controls">
+<div class="transport"><button id="prev" aria-label="Previous event">←</button><button id="next" aria-label="Next event">→</button><span id="position"></span></div>
+<label class="jump">Jump to event <select id="jump" aria-label="Jump to event"></select></label>
+<button id="zoom" aria-pressed="false">Expand spacing</button>
+</div>
+<div id="viewport" class="viewport" tabindex="0" aria-label="Scrollable chronology. Use left and right arrow keys to select events.">
+<div id="chart" class="chart"></div>
+</div>
+<div class="scrubber"><span>325</span><input id="scrub" type="range" min="0" step="1" aria-label="Scrub through events"><span>2022</span></div>
+<div class="legend"><span><i class="e"></i>Ecumenical Council</span><span><i class="p"></i>Great Orthodox Council</span><span><i class="c"></i>Other council</span><span><i class="s"></i>Schism or separation</span><span><i class="r"></i>Reconciliation or dialogue</span><span><i class="m"></i>Movement or milestone</span><span class="scale">Equal spacing between events · relationships are schematic</span></div>
+</section>
+<article id="detail" class="detail" aria-label="Selected event"></article>
+<div class="sr" id="announcement" aria-live="polite"></div>
+<footer id="method"><div class="eyebrow">ABOUT THE ATLAS</div><p>A selective history of major Christian traditions and events, told from an Eastern Orthodox perspective. The early councils and the Great Schism are presented through the Orthodox Church’s understanding of its continuity with the early Church. Branches show broad historical relationships. Dotted lines mark movements with multiple roots or connections through earlier reform movements. Names for early churches often reflect later usage.</p><p><strong>Council coverage.</strong> The Great Orthodox Council markers include every later council named in the 2016 Crete encyclical and the Council of Crete itself, alongside selected inter-Orthodox councils on church governance. The designation groups councils by wider significance. Their participation, reception and standing vary. The Quinisext and the 1347 Hesychast synod appear alongside them as related councils.</p></footer>
+</main>
+</body>
+</html>
